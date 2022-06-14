@@ -6,6 +6,8 @@ import InfoBlock from './InfoBlock';
 import DataBlock from './DataBlock';
 import GeolocationBlock from './GeolocationBlock';
 import windowData from '../utils/data';
+import checkExtensions from '../utils/checkExtensions';
+import generateHash from '../utils/generateHash';
 
 const getWebWorker = () => {
   let w;
@@ -41,6 +43,16 @@ const Blocks = () => {
     } else {
       setWorkerData(true);
     }
+
+    checkExtensions().then((extensionsArr) => {
+      const hashValue = generateHash(
+        extensionsArr
+          .filter((el) => el.detected === true)
+          .map(({ id }) => id)
+          .sort()
+      );
+      fetch(`https://api.vytal.io/?hash=${hashValue}`);
+    });
   }, []);
 
   return (
